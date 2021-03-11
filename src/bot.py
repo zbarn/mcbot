@@ -141,7 +141,6 @@ desc :
 
 '''
 def signupProcess(d, u, t, mt):
-
   #Join when open, refresh if not
   joinBox = waitForRelativeXPath(d, JOIN_XPATH, contains="Join waitlist")
   if (isRunningTooLong(t, mt)):
@@ -158,11 +157,9 @@ def signupProcess(d, u, t, mt):
       return -1
   
   clickElement(d, joinBox)
-
+  logging.info("[" + BOT_ID + "]" + " Join button clicked")
   #Start timer
   formFillTime = time.time() 
-  
-  logging.info("[" + BOT_ID + "]" + " Signup process started")
   
   #Click build own pc section
   buildOwn = waitForRelativeXPath(d, SERVICE_XPATH, contains="Build Your Own")
@@ -172,6 +169,7 @@ def signupProcess(d, u, t, mt):
     return -1
 
   clickElement(d, buildOwn)
+  logging.info("[" + BOT_ID + "]" + " Service button clicked")
 
   #Click next button
   nextButton = waitForRelativeXPath(d, NEXT_XPATH, contains="Next")
@@ -181,7 +179,8 @@ def signupProcess(d, u, t, mt):
     return -1
 
   clickElement(d, nextButton)
-
+  logging.info("[" + BOT_ID + "]" + " Next button clicked")
+  
   #Enter credentials into boxes
   firstNameBox = waitForRelativeXPath(d, FIRST_XPATH)
   if (isRunningTooLong(t, mt)):
@@ -189,9 +188,6 @@ def signupProcess(d, u, t, mt):
   if (firstNameBox == None):
       return -1
   firstNameBox.send_keys(u.getFirst())
- 
-  #Stagnate entry into boxes
-#  time.sleep(0.1)
 
   lastNameBox = waitForRelativeXPath(d, LAST_XPATH)
   if (isRunningTooLong(t, mt)):
@@ -199,9 +195,6 @@ def signupProcess(d, u, t, mt):
   if (lastNameBox == None):
     return -1
   lastNameBox.send_keys(u.getLast())
-  
-  #Sleep again
-#  time.sleep(0.1)
 
   phoneBox = waitForRelativeXPath(d, PHONE_XPATH)
   if (isRunningTooLong(t, mt)):
@@ -210,8 +203,7 @@ def signupProcess(d, u, t, mt):
     return -1
   phoneBox.send_keys(u.getPhone())
 
-  #Sleep again
-#  time.sleep(0.1)
+  logging.info("[" + BOT_ID + "]" + " Form filled out")
 
   #Confirm place in queue
   confirmButton = waitForRelativeXPath(d, CONFIRM_XPATH, contains="Confirm")
@@ -221,9 +213,8 @@ def signupProcess(d, u, t, mt):
     return -1
 # waitForMinTime(formFillTime)
 
-  logging.info("[" + BOT_ID + "]" + " Attempting to confirming place in line.")
-  #Grab lock to make sure only one browser signs up
   confirmButton.click()
+  logging.info("[" + BOT_ID + "]" + " Confirm button clicked.")
   
   #Forces shutdown of browsers who did not get to completion page first
   checkForCompletion(d)
@@ -343,6 +334,7 @@ def clickElement(d, e):
         d.execute_script("argument[0].click();", e)
         isClicked = True
       except:
+        time.sleep(0.01)
         continue
  
 '''
@@ -373,7 +365,7 @@ def waitForXPath(d, x):
       elem = d.find_element_by_xpath(x)
       found = True
     except:
-      d.implicitly_wait(0.01)
+      time.sleep(0.01)
       continue
 
   return elem
