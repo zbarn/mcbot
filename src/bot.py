@@ -23,7 +23,7 @@ SITE_URL = "https://v2.waitwhile.com/welcome/microcenterstlo"
 START_BOT_TIME = 44700   #6:25 am universal time
 END_BOT_TIME = 57600     #10:00 am universal time
 
-FIREFOX_DRIVER_DIR = os.path.join(".", "driver")
+DRIVER_DIR = "./driver/"
 CHROME_AGENTS_FILE = "chrome_agents.txt"
 FIREFOX_AGENTS_FILE = "firefox_agents.txt"
 RANDOM_REFRESH = 3+(4*random.random())
@@ -564,7 +564,7 @@ def addDriver(b):
   if (b.getType() == "Chrome"):
     d = webdriver.Chrome(options=(b.getOptions()))
   elif (b.getType() == "Firefox"):
-    d = webdriver.Firefox(FIREFOX_DRIVER_DIR, options=(b.getOptions()))
+    d = webdriver.Firefox(DRIVER_DIR, options=(b.getOptions()))
   
   d.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
   d.get(SITE_URL)
