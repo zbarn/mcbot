@@ -8,6 +8,8 @@ import random
 import sys
 import logging
 import math
+import os
+from signal import signal, SIGINT, SIGTERM, SIGSEGV
 from filelock import Timeout, FileLock
 from Browser import Browser
 from User import User
@@ -21,6 +23,7 @@ SITE_URL = "https://v2.waitwhile.com/welcome/microcenterstlo"
 START_BOT_TIME = 44700   #6:25 am universal time
 END_BOT_TIME = 57600     #10:00 am universal time
 
+FIREFOX_DRIVER_DIR = os.path.join(".", "driver")
 CHROME_AGENTS_FILE = "chrome_agents.txt"
 FIREFOX_AGENTS_FILE = "firefox_agents.txt"
 RANDOM_REFRESH = 3+(4*random.random())
@@ -28,12 +31,10 @@ RANDOM_REFRESH = 3+(4*random.random())
 MEAN_BROWSER_DURATION = 180  #Max seconds before new browser created
 START_BROWSER_STEP = 24     #Seconds before another browser (running on different thread) can start
 
+# Not functional on Firefox
 PROXY_ON = True
 
-#Change depending on internet speed, time it and see how long it normally takes
-#and then add 25 percent to it
-CONFIRM_BUTTON_WAIT = 5
-
+HEADLESS = False
 
 #XPath to buttons
 JOIN_XPATH = "//button"
@@ -47,13 +48,16 @@ CONFIRM_XPATH = "//button"
 #Assign ID between 100,000 - 999,999
 BOT_ID = str(100000 +  math.floor(900000 * random.random()))
 
-#Override some globals when testing
+#Override some globals if needed
 if ("--test" in sys.argv):
-  SITE_URL = "https://v2.waitwhile.com/welcome/asd2"
+  SITE_URL = "https://v2.waitwhile.com/welcome/tg5azh"
   START_BOT_TIME = 0
   END_BOT_TIME = 200000
-  
-def main():
+
+if ("--headless" in sys.argv):
+  HEADLESS = True
+
+def main():  
   #Calculate duration this isntance of browser will last
   browserDuration = (0.5 + random.random()) * MEAN_BROWSER_DURATION
 
@@ -523,7 +527,8 @@ def getBrowser():
 
   if browserType == "Firefox":
     tempOpt = selenium.webdriver.firefox.options.Options()
-    tempOpt.set_headless()
+    if (HEADLESS):
+      tempOpt.set_headless()
 #   userAgents = getUserAgents("Firefox")
 #   tempOpt.add_preference("general.useragent.override", userAgents[round(random.random()*(len(userAgents)-1))])
   else:
@@ -559,8 +564,8 @@ def addDriver(b):
   if (b.getType() == "Chrome"):
     d = webdriver.Chrome(options=(b.getOptions()))
   elif (b.getType() == "Firefox"):
-    d = webdriver.Firefox(options=(b.getOptions()))
-
+    d = webdriver.Firefox(FIREFOX_DRIVER_DIR, options=(b.getOptions()))
+  
   d.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
   d.get(SITE_URL)
   
