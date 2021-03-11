@@ -97,6 +97,7 @@ def main():
   logging.info("[" + BOT_ID + "]" + " Browser created")
 
   addDriver(activeBrowser)
+
   returnCode = signupProcess(activeBrowser.getDriver(), user, t, browserDuration)
   while returnCode != 0:
     #Waited too long for element, do signup process again
@@ -220,19 +221,13 @@ def signupProcess(d, u, t, mt):
     return -1
 # waitForMinTime(formFillTime)
 
-  logging.info("[" + BOT_ID + "]" + " Confirming place in line.")
+  logging.info("[" + BOT_ID + "]" + " Attempting to confirming place in line.")
   #Grab lock to make sure only one browser signs up
-  finished = enterFinisherQueue(confirmButton, d)
-#  finished = 0  # Testing
+  confirmButton.click()
   
-  if (finished == 0):
-    logging.info("[" + BOT_ID + "]" + " Bot signed up.")
-    print("Bot successfully signed up.")
-  elif (finished == 1):
-    logging.info("[" + BOT_ID + "]" + " Bot has already been signed up.")
-  else:
-    logging.info("[" + BOT_ID + "]" + " BOT FAILED. IT WAS DETECTED.")
-
+  #Forces shutdown of browsers who did not get to completion page first
+  checkForCompletion(d)
+  
   #Wait 5 minutes before closing browser
   time.sleep(300)
   d.quit()
@@ -536,6 +531,7 @@ def getBrowser():
 
   if browserType == "Firefox":
     tempOpt = selenium.webdriver.firefox.options.Options()
+    tempOpt.set_headless()
 #   userAgents = getUserAgents("Firefox")
 #   tempOpt.add_preference("general.useragent.override", userAgents[round(random.random()*(len(userAgents)-1))])
   else:
@@ -721,8 +717,22 @@ def checkIfDetected(b, d):
 '''
 
 '''
-#def checkForCompletion(s):
-#  while (time.time() - t > s
+def checkForCompletion(d):
+  while ("complete" not in d.current_url):
+    f = open("complete.txt", "r")
+    if "DONE" in f.read():
+      d.quit()
+      f.close()
+      return
+      
+  logging.info("[" + BOT_ID + "]" + " Bot entered into queue.")
+  f = open("complete.txt", "w+")
+  f.write("DONE")
+  f.close()
+  return
+    
+    
+  return
   
 if __name__ == "__main__":
   main()

@@ -1,3 +1,7 @@
 *~
 *.log
 finisher.txt
+complete.txt
+*d.md
+*pycache*
+*personal*
