@@ -564,7 +564,7 @@ def addDriver(b):
   if (b.getType() == "Chrome"):
     d = webdriver.Chrome(options=(b.getOptions()))
   elif (b.getType() == "Firefox"):
-    d = webdriver.Firefox(DRIVER_DIR, options=(b.getOptions()))
+    d = webdriver.Firefox(options=(b.getOptions()))
   
   d.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
   d.get(SITE_URL)
