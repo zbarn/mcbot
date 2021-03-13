@@ -220,9 +220,8 @@ def signupProcess(d, u, t, mt):
   
   #Forces shutdown of browsers who did not get to completion page first
   checkForCompletion(d)
-  
-  #Wait 5 minutes before closing browser
-  time.sleep(300)
+ 
+  #Bot is complete, close browser
   d.quit()
 
   return 0
@@ -704,7 +703,6 @@ def checkForCompletion(d):
   while ("complete" not in d.current_url):
     f = open("complete.txt", "r")
     if "DONE" in f.read():
-      d.quit()
       f.close()
       return
       
