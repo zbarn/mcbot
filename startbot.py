@@ -55,15 +55,16 @@ return : none
 
 desc :
 
-    Deletes files from past sessions of the bot. These files need
+    Deletes old files from past sessions of the bot. These files need
     to be cleaned for the bot to function properly.
 
 '''
 def cleanFiles():
   for f in os.listdir():
-    if ((f == "complete.txt") or (f == "finisher.txt")):
+    if (f == "complete.txt"):
       os.remove(f)
-  
+
+  open("complete.txt", "w+").close()
 
 '''
 createArgs(first, last, phone, headless)
