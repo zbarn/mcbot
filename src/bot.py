@@ -20,7 +20,7 @@ MIN_TIME = 0.1 #Minimum time in seconds bot must take before joining
 SITE_URL = "https://v2.waitwhile.com/welcome/microcenterstlo"
 
   
-START_BOT_TIME = 44700   #6:25 am universal time
+START_BOT_TIME = 45900   #6:45 am universal time
 END_BOT_TIME = 57600     #10:00 am universal time
 
 DRIVER_DIR = "./driver/"
@@ -87,8 +87,6 @@ def main():
 
   #Create new user with provided credentials
   user = User(fn=firstName, ln=lastName, pn=phoneNum)
- 
-  print(firstName, lastName, "(" + phoneNum + ")", "will be added to the waitlist.")
 
   #Bot is active 6:25 AM - 10:00 AM
   waitForStartTime()
@@ -310,7 +308,6 @@ def verifyClick(elem):
     except:
       buttonClicked = True
 
-  print("Click verified")
   return
 
 '''
@@ -468,7 +465,6 @@ def waitForStartTime():
 
   #While current time outside of range, idle bot
   while (not ((totalSecs < END_BOT_TIME) and (totalSecs >= START_BOT_TIME))):
-    print("Time range not met, idling. T=" + str(totalSecs), "[" + str(START_BOT_TIME) + ", " + str(END_BOT_TIME) + ")")
     logging.info("[" + BOT_ID + "]" + " Bot not within time, waiting.")
     time.sleep(2)
 
@@ -476,8 +472,6 @@ def waitForStartTime():
     mn = int(datetime.datetime.utcnow().strftime("%M"))
     scs = int(datetime.datetime.utcnow().strftime("%S"))
     totalSecs = (hr*3600) + (mn * 60) + scs
-
-  print("Time range met. The bot begins.")
 
   return
 
@@ -641,7 +635,6 @@ def enterFinisherQueue(b, d):
     f = open("finisher.txt", "r")
     contents = f.read().strip()
     f.close()
-    print("contents =", contents)
     if (contents != "DONE"):
       logging.info("[" + BOT_ID + "]" + " No browser entered yet. Confirming place in queue.")
       b.click()
@@ -655,10 +648,8 @@ def enterFinisherQueue(b, d):
         return 0
       else:
         logging.info("[" + BOT_ID + "]" + " Browser was detected.")
-        print("You were detected.")
         return -1
     else:
-      print("Signup already complete, quitting")
       return 1
 
 
@@ -682,16 +673,12 @@ def checkIfDetected(b, d):
   try:
     while True:
       #If button is disabled for more than CONFIRM_BUTTON_WAIT seconds, you were detected
-      print("Checking button")
       if (not b.is_enabled()):
         time.sleep(CONFIRM_BUTTON_WAIT)
         if (not b.is_enabled()):
-          print("Button disabled!!")
           return True
       #If it has taken too long, you were detected
-      print("Checking time")
       if (time.time() - t > 2*CONFIRM_BUTTON_WAIT):
-        print("TIME TAKING TOO LONG")
         return True
   #Exception means button no longer visible
   except:
@@ -707,7 +694,6 @@ def checkIfDetected(b, d):
 #        return True
     #Failure if not
     else:
-      print("Redirected to wrong page!")
       return True
 
 
