@@ -86,6 +86,10 @@ def main():
   #Create new user with provided credentials
   user = User(fn=firstName, ln=lastName, pn=phoneNum)
 
+  # Modify site url to accept credentials as parameters (removes need to fillout form)
+  global SITE_URL
+  SITE_URL = SITE_URL + "?firstname=" + firstName + "&lastname=" + lastName + "&phone=" + phoneNum
+  
   #Bot is active 6:25 AM - 10:00 AM
   waitForStartTime()
 
@@ -179,29 +183,29 @@ def signupProcess(d, u, t, mt):
   clickElement(d, nextButton)
   logging.info("[" + BOT_ID + "]" + " Next button clicked")
   
-  #Enter credentials into boxes
-  firstNameBox = waitForRelativeXPath(d, FIRST_XPATH)
-  if (isRunningTooLong(t, mt)):
-    return -2
-  if (firstNameBox == None):
-      return -1
-  firstNameBox.send_keys(u.getFirst())
+  # #Enter credentials into boxes
+  # firstNameBox = waitForRelativeXPath(d, FIRST_XPATH)
+  # if (isRunningTooLong(t, mt)):
+    # return -2
+  # if (firstNameBox == None):
+      # return -1
+  # firstNameBox.send_keys(u.getFirst())
 
-  lastNameBox = waitForRelativeXPath(d, LAST_XPATH)
-  if (isRunningTooLong(t, mt)):
-    return -2
-  if (lastNameBox == None):
-    return -1
-  lastNameBox.send_keys(u.getLast())
+  # lastNameBox = waitForRelativeXPath(d, LAST_XPATH)
+  # if (isRunningTooLong(t, mt)):
+    # return -2
+  # if (lastNameBox == None):
+    # return -1
+  # lastNameBox.send_keys(u.getLast())
 
-  phoneBox = waitForRelativeXPath(d, PHONE_XPATH)
-  if (isRunningTooLong(t, mt)):
-    return -2
-  if (phoneBox == None):
-    return -1
-  phoneBox.send_keys(u.getPhone())
+  # phoneBox = waitForRelativeXPath(d, PHONE_XPATH)
+  # if (isRunningTooLong(t, mt)):
+    # return -2
+  # if (phoneBox == None):
+    # return -1
+  # phoneBox.send_keys(u.getPhone())
 
-  logging.info("[" + BOT_ID + "]" + " Form filled out")
+  # logging.info("[" + BOT_ID + "]" + " Form filled out")
 
   #Confirm place in queue
   confirmButton = waitForRelativeXPath(d, BUTTON_XPATH, contains="Confirm")
