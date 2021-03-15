@@ -472,7 +472,8 @@ def getBrowser():
   if browserType == "Firefox":
     tempOpt = selenium.webdriver.firefox.options.Options()
     if (HEADLESS):
-      tempOpt.set_headless()
+      #tempOpt.set_headless()
+      tempOpt.headless = True
 
   b = Browser(opts=tempOpt, url=SITE_URL, t=browserType)
 
