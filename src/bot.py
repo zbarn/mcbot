@@ -1,6 +1,7 @@
 from selenium import webdriver
 import selenium.webdriver.chrome.options
 import selenium.webdriver.firefox.options
+from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
 from selenium.webdriver.common.proxy import Proxy, ProxyType
 import time
 import datetime
@@ -16,47 +17,44 @@ from User import User
 
 logging.basicConfig(filename="log.log", format="%(asctime)s %(message)s", level=logging.INFO)
 
-MIN_TIME = 0.1 #Minimum time in seconds bot must take before joining
-SITE_URL = "https://v2.waitwhile.com/welcome/microcenterstlo"
-
-  
+# String concantenation helps prevent repo from showing in search
+SITE_URL = "https://v2.waitwhile.com/welcome/micro" + "centerstlo"
+ 
+# Time range bot begins
 START_BOT_TIME = 45900   #6:45 am universal time
 END_BOT_TIME = 57600     #10:00 am universal time
 
+# Location of driver
 DRIVER_DIR = "./driver/"
-CHROME_AGENTS_FILE = "chrome_agents.txt"
-FIREFOX_AGENTS_FILE = "firefox_agents.txt"
+
+# Time before browser refreshes
 RANDOM_REFRESH = 3+(4*random.random())
 
-MEAN_BROWSER_DURATION = 180  #Max seconds before new browser created
-START_BROWSER_STEP = 24     #Seconds before another browser (running on different thread) can start
+# Average time before browser is closed and reopened
+MEAN_BROWSER_DURATION = 180
 
-# Not functional on Firefox
-PROXY_ON = True
-
-HEADLESS = False
-
-#XPath to buttons
-JOIN_XPATH = "//button"
-SERVICE_XPATH = "//button"
-NEXT_XPATH = "//button"
+#XPath to elements needed
+BUTTON_XPATH = "//button"
 FIRST_XPATH = "//*[@id=\"name02\"]"
 LAST_XPATH = "//*[@id=\"name03\"]"
 PHONE_XPATH = "//*[@id=\"phone01\"]"
-CONFIRM_XPATH = "//button"
+
 
 #Assign ID between 100,000 - 999,999
 BOT_ID = str(100000 +  math.floor(900000 * random.random()))
 
-#Override some globals if needed
+#Override some globals for testing
 if ("--test" in sys.argv):
   SITE_URL = "https://v2.waitwhile.com/welcome/tg5azh"
   START_BOT_TIME = 0
   END_BOT_TIME = 200000
 
+# Whether browser runs in headless mode
 if ("--headless" in sys.argv):
   HEADLESS = True
-
+else:
+  HEADLESS = False
+  
 def main():  
   #Calculate duration this isntance of browser will last
   browserDuration = (0.5 + random.random()) * MEAN_BROWSER_DURATION
@@ -144,7 +142,7 @@ desc :
 '''
 def signupProcess(d, u, t, mt):
   #Join when open, refresh if not
-  joinBox = waitForRelativeXPath(d, JOIN_XPATH, contains="Join waitlist")
+  joinBox = waitForRelativeXPath(d, BUTTON_XPATH, contains="Join waitlist")
   if (isRunningTooLong(t, mt)):
     return -2
   if (joinBox == None):
@@ -152,7 +150,7 @@ def signupProcess(d, u, t, mt):
   while (not (joinBox.is_enabled())):
     logging.info("[" + BOT_ID + "]" + " Join not enabled. Refreshing")
     d.refresh()
-    joinBox = waitForRelativeXPath(d, JOIN_XPATH, contains="Join waitlist")
+    joinBox = waitForRelativeXPath(d, BUTTON_XPATH, contains="Join waitlist")
     if (isRunningTooLong(t, mt)):
       return -2
     if (joinBox == None):
@@ -160,11 +158,9 @@ def signupProcess(d, u, t, mt):
   
   clickElement(d, joinBox)
   logging.info("[" + BOT_ID + "]" + " Join button clicked")
-  #Start timer
-  formFillTime = time.time() 
   
   #Click build own pc section
-  buildOwn = waitForRelativeXPath(d, SERVICE_XPATH, contains="Build Your Own")
+  buildOwn = waitForRelativeXPath(d, BUTTON_XPATH, contains="Build Your Own")
   if (isRunningTooLong(t, mt)):
     return -2
   if (buildOwn == None):
@@ -174,7 +170,7 @@ def signupProcess(d, u, t, mt):
   logging.info("[" + BOT_ID + "]" + " Service button clicked")
 
   #Click next button
-  nextButton = waitForRelativeXPath(d, NEXT_XPATH, contains="Next")
+  nextButton = waitForRelativeXPath(d, BUTTON_XPATH, contains="Next")
   if (isRunningTooLong(t, mt)):
     return -2
   if (nextButton == None):
@@ -208,12 +204,11 @@ def signupProcess(d, u, t, mt):
   logging.info("[" + BOT_ID + "]" + " Form filled out")
 
   #Confirm place in queue
-  confirmButton = waitForRelativeXPath(d, CONFIRM_XPATH, contains="Confirm")
+  confirmButton = waitForRelativeXPath(d, BUTTON_XPATH, contains="Confirm")
   if (isRunningTooLong(t, mt)):
     return -2
   if (confirmButton == None):
     return -1
-# waitForMinTime(formFillTime)
 
   confirmButton.click()
   logging.info("[" + BOT_ID + "]" + " Confirm button clicked.")
@@ -421,26 +416,6 @@ def waitForRelativeXPath(d, x, contains=None, text=None):
       continue
 
   return foundElement
-  
-'''
-waitForMinTime(t)
-
-param : t : starting time
-
-return : none
-
-desc :
-
-    Ensures that the delta between the current time
-    and the time passed, t, is at least MIN_TIME .
-
-'''
-def waitForMinTime(t):
-  currTime = time.time()
-  while ((currTime - t) < MIN_TIME):
-    currTime = time.time()
-
-  return
 
 '''
 waitForStartTime()
@@ -473,35 +448,7 @@ def waitForStartTime():
     totalSecs = (hr*3600) + (mn * 60) + scs
 
   return
-
-'''
-getUserAgents()
-
-param : s : browser type string
-
-return : array of string
-
-desc :
-
-    Read the user agents file and return all agents
-    within.
-
-'''
-def getUserAgents(s):
-  if (s == "Firefox"):
-    fin = open(FIREFOX_AGENTS_FILE, "r")
-  elif (s == "Chrome"):
-    fin = open(CHROME_AGENTS_FILE, "r")
-
-  lines = fin.readlines()
-  agents = []
-  for i in range(0, len(lines)):
-    lines[i] = lines[i].strip()
-    if lines[i] != "":
-      agents.append(lines[i])
-
-  return agents
-
+  
 '''
 getBrowser()
 
@@ -522,19 +469,6 @@ def getBrowser():
     tempOpt = selenium.webdriver.firefox.options.Options()
     if (HEADLESS):
       tempOpt.set_headless()
-#   userAgents = getUserAgents("Firefox")
-#   tempOpt.add_preference("general.useragent.override", userAgents[round(random.random()*(len(userAgents)-1))])
-  else:
-    userAgents = getUserAgents("Chrome")
-    tempOpt = selenium.webdriver.chrome.options.Options()
-    tempOpt.add_experimental_option("excludeSwitches", ["enable-automation"])
-    tempOpt.add_experimental_option('useAutomationExtension', False)
-    tempOpt.add_argument("user-agent="+userAgents[round(random.random()*(len(userAgents)-1))])
-    tempOpt.add_argument("window-size=1920,1080")
-    tempOpt.add_argument("--disable-blink-features=AutomationControlled")
- 
-  if (PROXY_ON):
-    tempOpt.add_argument("--proxy-server=" + "socks5://localhost:9050")
 
   b = Browser(opts=tempOpt, url=SITE_URL, t=browserType)
 
@@ -554,10 +488,44 @@ desc :
 
 '''
 def addDriver(b):
-  if (b.getType() == "Chrome"):
-    d = webdriver.Chrome(options=(b.getOptions()))
-  elif (b.getType() == "Firefox"):
-    d = webdriver.Firefox(options=(b.getOptions()))
+  if (b.getType() == "Firefox"):
+    # Disables css, images, and flash
+    profile = FirefoxProfile()
+    profile.set_preference("network.http.pipelining", True)
+    profile.set_preference("network.http.proxy.pipelining", True)
+    profile.set_preference("network.http.pipelining.maxrequests", 8)
+    profile.set_preference("content.notify.interval", 500000)
+    profile.set_preference("content.notify.ontimer", True)
+    profile.set_preference("content.switch.threshold", 250000)
+    profile.set_preference("browser.cache.memory.capacity", 65536) # Increase the cache capacity.
+    profile.set_preference("browser.startup.homepage", "about:blank")
+    profile.set_preference("reader.parse-on-load.enabled", False) # Disable reader, we won't need that.
+    profile.set_preference("browser.pocket.enabled", False) # Duck pocket too!
+    profile.set_preference("loop.enabled", False)
+    profile.set_preference("browser.chrome.toolbar_style", 1) # Text on Toolbar instead of icons
+    profile.set_preference("browser.display.show_image_placeholders", False) # Don't show thumbnails on not loaded images.
+    profile.set_preference("browser.display.use_document_colors", False) # Don't show document colors.
+    profile.set_preference("browser.display.use_document_fonts", 0) # Don't load document fonts.
+    profile.set_preference("browser.display.use_system_colors", True) # Use system colors.
+    profile.set_preference("browser.formfill.enable", False) # Autofill on forms disabled.
+    profile.set_preference("browser.helperApps.deleteTempFileOnExit", True) # Delete temprorary files.
+    profile.set_preference("browser.shell.checkDefaultBrowser", False)
+    profile.set_preference("browser.startup.homepage", "about:blank")
+    profile.set_preference("browser.startup.page", 0) # blank
+    profile.set_preference("browser.tabs.forceHide", True) # Disable tabs, We won't need that.
+    profile.set_preference("browser.urlbar.autoFill", False) # Disable autofill on URL bar.
+    profile.set_preference("browser.urlbar.autocomplete.enabled", False) # Disable autocomplete on URL bar.
+    profile.set_preference("browser.urlbar.showPopup", False) # Disable list of URLs when typing on URL bar.
+    profile.set_preference("browser.urlbar.showSearch", False) # Disable search bar.
+    profile.set_preference("extensions.checkCompatibility", False) # Addon update disabled
+    profile.set_preference("extensions.checkUpdateSecurity", False)
+    profile.set_preference("extensions.update.autoUpdateEnabled", False)
+    profile.set_preference("extensions.update.enabled", False)
+    profile.set_preference("general.startup.browser", False)
+    profile.set_preference("plugin.default_plugin_disabled", False)
+    profile.set_preference("permissions.default.image", 2) # Image load disabled again
+    
+    d = webdriver.Firefox(profile, options=(b.getOptions()))
   
   d.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
   d.get(SITE_URL)
@@ -591,26 +559,6 @@ def isRunningTooLong(t, mt):
     return False
 
 '''
-enterStarterQueue()
-
-param : none
-
-return : none
-
-desc :
-
-    Browser does not start until it can get the
-    starter lock. This process ensures that the 
-    IP addresses of each browser are not similar.
-
-'''
-def enterStarterQueue():
-  lock = FileLock("starter.lock")
-  with lock:
-    #Stagnate starts to avoid similar ips
-    time.sleep(START_BROWSER_STEP)
-
-'''
 enterFinisherQueue()
 
 param : b : button to click
@@ -623,7 +571,9 @@ return : 0 if successful signup
 desc :
 
     Attempts to be the browser to confirm an entry
-    into a queue. 
+    into a queue. This function is needed for waitlists
+    that don't prevent multiple entries from the same person.
+    Because of this, it is not needed at MC STLO location.
 
 '''
 def enterFinisherQueue(b, d):
@@ -665,6 +615,9 @@ desc :
     Returns true or false based on whether
     the bot detection was triggered for the 
     browser instance.
+    
+    This function is not needed for Firefox browsers
+    as the bot detection doesnt seem to work for them.
 
 '''
 def checkIfDetected(b, d):
@@ -684,20 +637,25 @@ def checkIfDetected(b, d):
     #Check if on completion page
     if ("complete" in d.current_url):
       return False
-#      t = time.time()
-#      time.sleep(1)
-#      #If still on completion page after second, you are good
-#      if ("complete" in d.current_url):
-#        return False
-#      else: 
-#        return True
     #Failure if not
     else:
       return True
 
 
 '''
+checkForCompletion(d)
 
+param : d : webdriver
+
+return : none
+
+desc :
+
+      Continuously checks if "complete" is within the 
+      url of the webpage. If so, the bot has been entered into
+      the queue and signup has finished. complete.txt will be modified
+      to let other bots know the signup is complete.
+      
 '''
 def checkForCompletion(d):
   while ("complete" not in d.current_url):
