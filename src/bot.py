@@ -10,7 +10,6 @@ import sys
 import logging
 import math
 import os
-from signal import signal, SIGINT, SIGTERM, SIGSEGV
 from filelock import Timeout, FileLock
 from Browser import Browser
 from User import User
@@ -21,8 +20,8 @@ logging.basicConfig(filename="log.log", format="%(asctime)s %(message)s", level=
 SITE_URL = "https://v2.waitwhile.com/welcome/micro" + "centerstlo"
  
 # Time range bot begins
-START_BOT_TIME = 45900   #6:45 am universal time
-END_BOT_TIME = 57600     #10:00 am universal time
+START_BOT_TIME = 39600   #11:00 universal time
+END_BOT_TIME = 54000     #15:00 universal time
 
 # Location of driver
 DRIVER_DIR = "./driver/"
