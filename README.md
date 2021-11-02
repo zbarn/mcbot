@@ -1,40 +1,40 @@
-zpobg vf n fryravhz jro obg gung fvtaf n hfre hc gb gur zvpebpragre jnvgjuvyr yvfg
+mcbot is a selenium web bot that signs a user up to the microcenter waitwhile list
 
-# Vafgnyyngvba
+# Installation
 
-* Clguba3 vf erdhverq gb eha gur fpevcg.
-* Fbzr qrcraqrapvrf ner erdhverq sbe gur clguba fpevcg gb eha. Vafgnyy gurfr ivn:
+* Python3 is required to run the script.
+* Some dependencies are required for the python script to run. Install these via:
   
   ```
-  cvc vafgnyy -e erdhverzragf.gkg
+  pip install -r requirements.txt
   ```
   
-* Sversbk vf erdhverq. Gur yngrfg irefvba jvyy cebonoyl jbex.
+* Firefox is required. The latest version will probably work.
 
 
 
-# Frghc
+# Setup
 
-Gb frg gur obg hc, fvzcyl rqvg gur eha.ong naq svyy bhg lbhe svefg anzr, ynfg anzr, naq cubar ahzore va gur svefg guerr yvarf bs gur svyr. Lbh znl nyfb punatr gur nzbhag bs qvssrerag oebjfref gung ner bcrarq ol punatvat gur ynfg yvar:
-
-```
-vs %pbhag% ard 6 tbgb ybbc
-```
-
-gb:
+To set the bot up, simply edit the run.bat and fill out your first name, last name, and phone number in the first three lines of the file. You may also change the amount of different browsers that are opened by changing the last line:
 
 ```
-vs %pbhag% ard a tbgb ybbc
+if %count% neq 6 goto loop
 ```
 
-jurer a vf gur nzbhag bs oebjfref lbh qrfver.
+to:
+
+```
+if %count% neq n goto loop
+```
+
+where n is the amount of browsers you desire.
 
 
 
-# Grfgvat
+# Testing
 
-Gurer vf nyfb n cebivqrq grfgeha.ong svyr gung ehaf ba na nygreangr jnvgyvfg gung fubhyq unir gur fnzr trareny fgehpgher nf gur zvpebpragre jnvgyvfg. N fvgr unf gur fnzr trareny fgehpgher vs vg pbafvfgf bs gur fnzr ohggbaf, jvgu gur fnzr grkg ba gurz, gung ner cerffrq va n abezny fvtahc cebprff (Wbva -> Freivpr (Ohvyq bja cp, ercnve, rgp.) -> Cnegl fvmr -> sbez svyybhg). Gur sbez svyybhg cebprff erdhverf gung bayl gur svefg anzr, ynfg anzr, naq cubar ahzore ner erdhrfgrq sebz gur crefba fvtavat hc.
+There is also a provided testrun.bat file that runs on an alternate waitlist that should have the same general structure as the microcenter waitlist. A site has the same general structure if it consists of the same buttons, with the same text on them, that are pressed in a normal signup process (Join -> Service (Build own pc, repair, etc.) -> Party size -> form fillout). The form fillout process requires that only the first name, last name, and phone number are requested from the person signing up.
 
 
 
-V unir cebivqrq n trarevp grfg ongpu svyr gung hfrf n qhzzl cubar ahzore gung yvxryl vf abg npgvir. 
+I have provided a generic test batch file that uses a dummy phone number that likely is not active. 
